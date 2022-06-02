@@ -34,7 +34,7 @@ class HHBlits:
                  *,
                  binary_path: str,
                  databases: Sequence[str],
-                 n_cpu: int = cpu_count() // 2,
+                 n_cpu: int = cpu_count()//2,
                  n_iter: int = 3,
                  e_value: float = 0.001,
                  maxseq: int = 1_000_000,

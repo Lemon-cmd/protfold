@@ -33,7 +33,7 @@ class HHSearch:
                  *,
                  binary_path: str,
                  databases: Sequence[str],
-                 n_cpu: int = cpu_count() // 2,
+                 n_cpu: int = cpu_count()//2,
                  maxseq: int = 1_000_000):
         """Initializes the Python HHsearch wrapper.
 

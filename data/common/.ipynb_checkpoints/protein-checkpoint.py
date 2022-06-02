@@ -16,7 +16,7 @@
 import dataclasses
 import io
 from typing import Any, Mapping, Optional
-import residue_constants
+from data.common import residue_constants
 from Bio.PDB import PDBParser
 import numpy as np
 

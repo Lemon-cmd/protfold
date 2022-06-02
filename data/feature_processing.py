@@ -17,7 +17,7 @@
 from typing import Iterable, MutableMapping, List
 
 from data.common import residue_constants
-from data import msa_pairing
+from data import msa_pairings
 from data import pipeline
 import numpy as np
 
@@ -64,15 +64,15 @@ def pair_and_merge(
     pair_msa_sequences = not _is_homomer_or_monomer(np_chains_list)
 
     if pair_msa_sequences:
-        np_chains_list = msa_pairing.create_paired_features(
+        np_chains_list = msa_pairings.create_paired_features(
             chains=np_chains_list)
-        np_chains_list = msa_pairing.deduplicate_unpaired_sequences(np_chains_list)
+        np_chains_list = msa_pairings.deduplicate_unpaired_sequences(np_chains_list)
     np_chains_list = crop_chains(
         np_chains_list,
         msa_crop_size=MSA_CROP_SIZE,
         pair_msa_sequences=pair_msa_sequences,
         max_templates=MAX_TEMPLATES)
-    np_example = msa_pairing.merge_chain_features(
+    np_example = msa_pairings.merge_chain_features(
         np_chains_list=np_chains_list, pair_msa_sequences=pair_msa_sequences,
         max_templates=MAX_TEMPLATES)
     np_example = process_final(np_example)
@@ -125,7 +125,7 @@ def _crop_single_chain(chain: pipeline.FeatureDict,
         # the MSA size for each chain roughly constant.
         msa_all_seq = chain['msa_all_seq'][:msa_crop_size_all_seq, :]
         num_non_gapped_pairs = np.sum(
-            np.any(msa_all_seq != msa_pairing.MSA_GAP_IDX, axis=1))
+            np.any(msa_all_seq != msa_pairings.MSA_GAP_IDX, axis=1))
         num_non_gapped_pairs = np.minimum(num_non_gapped_pairs,
                                           msa_crop_size_all_seq)
 
@@ -143,9 +143,9 @@ def _crop_single_chain(chain: pipeline.FeatureDict,
 
     for k in chain:
         k_split = k.split('_all_seq')[0]
-        if k_split in msa_pairing.TEMPLATE_FEATURES:
+        if k_split in msa_pairings.TEMPLATE_FEATURES:
             chain[k] = chain[k][:templates_crop_size, :]
-        elif k_split in msa_pairing.MSA_FEATURES:
+        elif k_split in msa_pairings.MSA_FEATURES:
             if '_all_seq' in k and pair_msa_sequences:
                 chain[k] = chain[k][:msa_crop_size_all_seq, :]
             else:

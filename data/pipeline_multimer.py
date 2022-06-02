@@ -28,7 +28,7 @@ from absl import logging
 from data.common import protein
 from data.common import residue_constants
 from data import feature_processing
-from data import msa_pairing
+from data import msa_pairings
 from data import parsers
 from data import pipeline
 from data.tools import jackhmmer
@@ -230,7 +230,7 @@ class DataPipeline:
         msa = parsers.parse_stockholm(result['sto'])
         msa = msa.truncate(max_seqs=self._max_uniprot_hits)
         all_seq_features = pipeline.make_msa_features([msa])
-        valid_feats = msa_pairing.MSA_FEATURES + (
+        valid_feats = msa_pairings.MSA_FEATURES + (
             'msa_species_identifiers',
         )
         feats = {f'{k}_all_seq': v for k, v in all_seq_features.items()
