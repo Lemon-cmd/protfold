@@ -4,7 +4,7 @@ from data.pipeline_multimer import DataPipeline as DataPipelineM
 from data.tools import hhsearch
 from data import feature_processing as fprocess
 from model import modules_multimer
-import time
+import time, torch
 
 tsearch = HhsearchHitFeaturizer(
                             mmcif_dir = "/gpfs/u/home/HPDM/HPDMphmb/scratch-shared/pdb/pdb_mmcif/mmcif_files",
@@ -36,11 +36,17 @@ e = time.time()
 
 for key in np_example.keys():
     print(key, np_example[key].shape)
-    np_example[key] = torch.Tensor(np_example[key])
+    
+    if key != 'num_alignments' or key != 'seq_length':
+        np_example[key] = torch.Tensor(np_example[key])
+    else:
+        print(np_example[key])
 
 print(e - s, " s")
 
-np_example = modules_multimer.nearest_neighbor_clusters(batch, gap_agreement_weight=0.)
-msa_feat = modules_multimer.create_msa_feat(np_example)
+from model.pytorch import data_transforms
 
-print(msa_feat.shape)
+np_example = data_transforms.sample_msa(16, keep_extra=True)(np_example)
+
+for key in np_example.keys():
+    print(key, np_example[key].shape)
