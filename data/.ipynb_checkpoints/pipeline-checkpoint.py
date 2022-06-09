@@ -41,6 +41,7 @@ def make_sequence_features(
         sequence=sequence,
         mapping=residue_constants.restype_order_with_x,
         map_unknown_to_x=True)
+    
     features['between_segment_residues'] = np.zeros((num_res,), dtype=np.int32)
     features['domain_name'] = np.array([description.encode('utf-8')],
                                        dtype=np.object_)

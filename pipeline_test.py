@@ -16,13 +16,13 @@ pipeline = DataPipeline( jackhmmer_binary_path = "jackhmmer",
                          hhblits_binary_path = "hhblits",
                          uniref90_database_path = "/gpfs/u/home/HPDM/HPDMphmb/scratch-shared/pdb/uniref90/uniref90.fasta",
                          mgnify_database_path = "/gpfs/u/home/HPDM/HPDMphmb/scratch-shared/pdb/mgnify/mgy_clusters_2018_12.fa",
-                         bfd_database_path = "/gpfs/u/home/HPDM/HPDMphmb/scratch-shared/pdb/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt",
-                         #bfd_database_path = "/gpfs/u/home/HPDM/HPDMphmb/scratch-shared/pdb/UniRef30_2021_03/UniRef30_2021_03",
+                         #bfd_database_path = "/gpfs/u/home/HPDM/HPDMphmb/scratch-shared/pdb/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt",
+                         bfd_database_path = "/gpfs/u/home/HPDM/HPDMphmb/scratch-shared/pdb/bfd_tiny/bfd-first_non_consensus_sequences.fasta",
                          uniclust30_database_path = "/gpfs/u/home/HPDM/HPDMphmb/scratch-shared/pdb/UniRef30_2021_03/UniRef30_2021_03",
                          template_searcher = hhsearch.HHSearch(binary_path = "hhsearch", databases=["/gpfs/u/home/HPDM/HPDMphmb/scratch-shared/pdb/pdb70/pdb70"]),
                          template_featurizer = tsearch,
                          small_bfd_database_path = "/gpfs/u/home/HPDM/HPDMphmb/scratch-shared/pdb/bfd_tiny/bfd-first_non_consensus_sequences.fasta",
-                         use_small_bfd = False,
+                         use_small_bfd = True,
                          mgnify_max_hits = 11,
                          uniref_max_hits = 10, use_precomputed_msas = True)
 
@@ -40,13 +40,27 @@ for key in np_example.keys():
     if key != 'num_alignments' or key != 'seq_length':
         np_example[key] = torch.Tensor(np_example[key])
     else:
-        print(np_example[key])
+        print(np_example[key])        
 
 print(e - s, " s")
+
+print("..........\n\n")
 
 from model.pytorch import data_transforms
 
 np_example = data_transforms.sample_msa(16, keep_extra=True)(np_example)
+
+np_example = data_transforms.nearest_neighbor_clusters()(np_example)
+
+np_example = data_transforms.summarize_clusters()(np_example)
+
+np_example = data_transforms.make_pseudo_beta(prefix='')(np_example)
+
+np_example = data_transforms.make_hhblits_profile(np_example)
+
+np_example = data_transforms.make_masked_msa()(np_example)
+
+np_example = data_transforms.make_msa_feat()(np_example)
 
 for key in np_example.keys():
     print(key, np_example[key].shape)

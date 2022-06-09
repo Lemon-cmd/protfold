@@ -29,7 +29,7 @@ REQUIRED_FEATURES = frozenset({
     'entity_id', 'entity_mask', 'mem_peak', 'msa', 'msa_mask', 'num_alignments',
     'num_templates', 'queue_size', 'residue_index', 'resolution',
     'seq_length', 'seq_mask', 'sym_id', 'template_aatype',
-    'template_all_atom_mask', 'template_all_atom_positions'
+    'template_all_atom_mask', 'template_all_atom_positions', 'between_segment_residues'
 })
 
 MAX_TEMPLATES = 4
